@@ -1,0 +1,51 @@
+# Deploy the static site from the html/ folder to GitHub Pages.
+# You can edit this file as you learn — see DEPLOY-GITHUB.md for a line-by-line walkthrough.
+
+name: Deploy Learning site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: learning-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Optional: rebuild HTML on the server so you don't have to commit html/ after every edit.
+      # Remove this step if you only commit pre-built files under html/.
+      - name: Build static pages
+        run: node build.mjs
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: html
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
