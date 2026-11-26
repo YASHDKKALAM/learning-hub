@@ -8,10 +8,12 @@ import { paths } from "../paths.mjs";
 import { hubManifest } from "./manifest.js";
 import { prepareSqlTrack } from "./sql-track-bundle.js";
 import { prepareTestingTrack } from "./testing-track-bundle.js";
+import { prepareFastapiTrack } from "./fastapi-track-bundle.js";
 import { learnLevelDiagrams } from "../data/sql-practice-exercises.js";
 
 const sql = prepareSqlTrack();
 const testing = prepareTestingTrack();
+const fastapi = prepareFastapiTrack();
 const manifestJson = JSON.stringify(hubManifest);
 
 const testingNavHtml = testing.sections
@@ -19,6 +21,14 @@ const testingNavHtml = testing.sections
     (s) =>
       `<li><a href="#" class="testing-jump" data-section="${s.id}" style="--accent:${s.color}">` +
       `<span class="sec-icon">${s.icon}</span><span class="sec-label">${s.title}</span></a></li>`
+  )
+  .join("\n");
+
+const fastapiNavHtml = fastapi.sections
+  .map(
+    (s) =>
+      `<li><a href="#" class="fastapi-jump" data-hash="${s.hash}">` +
+      `<span class="sec-label">${s.title.replace(/</g, "&lt;")}</span></a></li>`
   )
   .join("\n");
 
@@ -155,6 +165,11 @@ const html = `<!DOCTYPE html>
     .practice-nav .nav-section { font-size: 0.68rem; color: #8b949e; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.6rem 0.55rem 0.25rem; margin-top: 0.35rem; }
     .practice-nav .nav-section.hidden-by-filter { display: none; }
     main.stage { padding: 1.35rem 2rem 3.5rem; max-width: 1120px; width: 100%; }
+    main.stage.embed-mode { padding: 0; max-width: none; }
+    .track-embed {
+      width: 100%; border: 0; display: block;
+      min-height: calc(100vh - 52px); background: #f4f7fb;
+    }
     .track-panel { display: none; }
     .track-panel.visible { display: block; }
     .placeholder-card {
@@ -264,6 +279,11 @@ const html = `<!DOCTYPE html>
           <h2 class="sidebar-heading">Topics</h2>
           <ul class="nav section-nav" id="testing-section-nav">${testingNavHtml}</ul>
         </div>
+        <div class="track-nav-panel" id="nav-panel-fastapi" data-track="fastapi">
+          <h2 class="sidebar-heading">Topics</h2>
+          <ul class="nav section-nav" id="fastapi-section-nav">${fastapiNavHtml}</ul>
+          <p class="side-hint"><a href="${fastapi.embedSrc}" target="_blank" rel="noopener">Open full page ↗</a></p>
+        </div>
         <div class="track-nav-panel" id="nav-panel-planned" data-track="planned">
           <p class="side-hint">This path is coming soon. SQL and QA are ready above.</p>
         </div>
@@ -275,6 +295,9 @@ const html = `<!DOCTYPE html>
       </div>
       <div class="track-panel" id="track-testing" data-track="testing" style="--track-accent:#1f6feb">
         <div class="testing-scroll">${testing.contentHtml}</div>
+      </div>
+      <div class="track-panel" id="track-fastapi" data-track="fastapi" style="--track-accent:#2457d6">
+        <iframe id="fastapi-frame" class="track-embed" src="${fastapi.embedSrc}" title="FastAPI Learning Guide"></iframe>
       </div>
       <div class="track-panel" id="track-placeholder" data-track="placeholder"></div>
     </main>
@@ -289,6 +312,7 @@ const html = `<!DOCTYPE html>
     const DIAGRAMS = ${sql.diagramsJson};
     const LEVEL_DIAGRAMS = ${JSON.stringify(learnLevelDiagrams)};
     const TESTING_SECTIONS = ${testing.sectionsJson || "[]"};
+    const FASTAPI_SECTIONS = ${fastapi.sectionsJson || "[]"};
 
     let db = null;
     let currentExerciseId = EXERCISES[0]?.id;
@@ -397,6 +421,7 @@ const html = `<!DOCTYPE html>
       } else if (track.id === "sql") {
         placeholder.classList.remove("visible");
         setTrackNavPanel("sql");
+        document.querySelector("main.stage")?.classList.remove("embed-mode");
         showModule(activeModuleId || "learn", false);
         history.replaceState(
           null,
@@ -406,6 +431,7 @@ const html = `<!DOCTYPE html>
       } else if (track.id === "testing") {
         placeholder.classList.remove("visible");
         setTrackNavPanel("testing");
+        document.querySelector("main.stage")?.classList.remove("embed-mode");
         const params = new URLSearchParams((location.hash || "").replace(/^#/, ""));
         let section = TESTING_SECTIONS[0]?.id;
         if (params.get("track") === "testing" && params.get("section")) {
@@ -416,7 +442,50 @@ const html = `<!DOCTYPE html>
         } else {
           history.replaceState(null, "", "#track=testing");
         }
+      } else if (track.id === "fastapi") {
+        placeholder.classList.remove("visible");
+        setTrackNavPanel("fastapi");
+        document.querySelector("main.stage")?.classList.add("embed-mode");
+        const params = new URLSearchParams((location.hash || "").replace(/^#/, ""));
+        let section = params.get("track") === "fastapi" ? params.get("section") : "";
+        if (section) {
+          scrollToFastapiSection("#" + section, false);
+        } else {
+          history.replaceState(null, "", "#track=fastapi");
+        }
+      } else {
+        document.querySelector("main.stage")?.classList.remove("embed-mode");
       }
+    }
+
+    function scrollToFastapiSection(hash, updateHash) {
+      const frame = document.getElementById("fastapi-frame");
+      const h = hash.startsWith("#") ? hash : "#" + hash;
+      const go = () => {
+        if (!frame?.contentWindow) return;
+        frame.contentWindow.location.hash = h.replace(/^#/, "");
+        document.querySelectorAll(".fastapi-jump").forEach((a) => {
+          a.classList.toggle("active", a.dataset.hash === h);
+        });
+        if (updateHash !== false) {
+          history.replaceState(
+            null,
+            "",
+            "#track=fastapi&section=" + encodeURIComponent(h.replace(/^#/, ""))
+          );
+        }
+      };
+      if (frame?.contentDocument?.readyState === "complete") go();
+      else frame?.addEventListener("load", () => go(), { once: true });
+    }
+
+    function initFastapiNav() {
+      document.querySelectorAll(".fastapi-jump").forEach((a) => {
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          scrollToFastapiSection(a.dataset.hash, true);
+        });
+      });
     }
 
     function showModule(id, updateHash) {
@@ -704,12 +773,16 @@ const html = `<!DOCTYPE html>
       if (section && track === "testing") {
         setTimeout(() => scrollToTestingSection(section, false), 200);
       }
+      if (section && track === "fastapi") {
+        setTimeout(() => scrollToFastapiSection("#" + section, false), 400);
+      }
     }
 
     parseHash();
     renderTrackList();
     initModules();
     initTestingNav();
+    initFastapiNav();
     selectTrack(activeTrackId);
     if (activeTrackId === "sql") showModule(activeModuleId, false);
     buildDbmsToc();

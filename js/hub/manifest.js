@@ -30,6 +30,15 @@ export const hubManifest = {
       builder: "testing",
     },
     {
+      id: "fastapi",
+      title: "FastAPI",
+      icon: "🚀",
+      accent: "#2457d6",
+      status: "active",
+      description: "Python REST APIs — guide, examples, interview Q&A",
+      builder: "fastapi",
+    },
+    {
       id: "javascript",
       title: "JavaScript",
       icon: "⚡",

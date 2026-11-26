@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A practical FastAPI learning guide from beginner to advanced, with examples, request flow, exercises and 20 interview questions.">
+<title>FastAPI Learning Guide | Beginner to Advanced</title>
+<style>
+:root{--bg:#f4f7fb;--panel:#fff;--ink:#182235;--muted:#617089;--line:#dce4ef;--blue:#2457d6;--blue2:#eaf0ff;--green:#16835d;--code:#111827;--gold:#e6b93f;--shadow:0 10px 30px rgba(28,49,82,.08)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{background:linear-gradient(125deg,#14294d,#2457d6);color:#fff;padding:48px 22px 42px}
+.hero{max-width:1120px;margin:auto}.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:.76rem;font-weight:800;color:#c9d7ff}.hero h1{font-size:clamp(2rem,5vw,3.6rem);line-height:1.08;margin:12px 0}.hero p{max-width:760px;color:#e3eaff;font-size:1.08rem}.chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}.chip{border:1px solid #ffffff55;border-radius:999px;padding:5px 12px;font-size:.85rem}
+.layout{max-width:1120px;margin:28px auto;padding:0 18px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:24px}
+nav{position:sticky;top:16px;align-self:start;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);max-height:calc(100vh - 32px);overflow:auto}
+nav strong{display:block;margin:0 0 10px}nav a{display:block;color:var(--muted);text-decoration:none;padding:6px 8px;border-radius:8px;font-size:.92rem}nav a:hover{background:var(--blue2);color:var(--blue)}
+main{min-width:0}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:22px;box-shadow:var(--shadow)}h2{font-size:1.65rem;margin:0 0 14px}h3{font-size:1.15rem;margin:24px 0 8px}h4{margin:15px 0 6px}p{margin:8px 0 14px}.muted{color:var(--muted)}.callout{background:var(--blue2);border-left:4px solid var(--blue);padding:13px 16px;border-radius:8px;margin:16px 0}.success{background:#e9f7f1;border-left-color:var(--green)}
+.flow{display:grid;gap:8px;max-width:680px;margin:18px auto}.flow div{padding:13px 16px;border:1px solid var(--line);border-radius:10px;text-align:center;background:#fbfcff;font-weight:700}.flow .arrow{border:0;background:none;padding:0;color:var(--blue);font-size:1.2rem}
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:.94rem}th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}th{background:#f0f4fa}
+pre{background:var(--code);color:#e5edf9;padding:17px;border-radius:12px;overflow:auto;font-size:.9rem;line-height:1.55}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}p code,li code,td code{background:#edf1f7;color:#24334c;padding:2px 5px;border-radius:5px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.mini{border:1px solid var(--line);border-radius:12px;padding:15px}.mini h3{margin:0 0 5px}.tag{display:inline-block;font-size:.76rem;font-weight:800;border-radius:999px;padding:3px 9px;background:#edf2ff;color:#234db4}
+details{border:1px solid var(--line);border-radius:11px;padding:13px 15px;margin:10px 0;background:#fff}summary{cursor:pointer;font-weight:700}details p{margin:10px 0 2px}.question{color:var(--blue);font-weight:800;margin-right:5px}
+ol,ul{padding-left:23px}li{margin:5px 0}.checklist label{display:block;padding:7px 0}.checklist input{margin-right:9px;accent-color:var(--blue)}
+footer{text-align:center;color:var(--muted);padding:28px 16px 45px}
+button{border:0;background:var(--blue);color:white;padding:10px 15px;border-radius:9px;font-weight:700;cursor:pointer}button:hover{filter:brightness(.93)}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}nav{position:static;max-height:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px}nav strong{grid-column:1/-1}.grid{grid-template-columns:1fr}}
+@media(max-width:520px){header{padding:35px 18px}.card{padding:19px}nav{grid-template-columns:1fr 1fr}table{font-size:.85rem}th,td{padding:8px}}
+@media print{body{background:#fff}.layout{display:block;max-width:none}nav,.toolbar{display:none}.card{box-shadow:none;break-inside:avoid}header{background:#fff;color:#111;padding:20px 0}.hero p,.eyebrow{color:#333}details{break-inside:avoid}details>*{display:block!important}}
+</style>
+</head>
+<body>
+<header>
+ <div class="hero">
+  <div class="eyebrow">Practical developer roadmap</div>
+  <h1>FastAPI Learning Guide</h1>
+  <p>Learn FastAPI from the fundamentals to advanced backend development—with clear request-flow explanations, runnable Python examples, practice tasks, and 20 interview questions with answers.</p>
+  <div class="chips"><span class="chip">Beginner → Advanced</span><span class="chip">Python</span><span class="chip">REST APIs</span><span class="chip">Hands-on projects</span></div>
+  <div class="toolbar"><button onclick="window.print()">Print / Save as PDF</button><button onclick="document.querySelector('#interview').scrollIntoView()">Go to interview questions</button></div>
+ </div>
+</header>
+<div class="layout">
+<nav aria-label="Table of contents">
+ <strong>On this page</strong>
+ <a href="#architecture">1. Architecture & flow</a><a href="#setup">2. Setup</a><a href="#first-api">3. First API</a>
+ <a href="#parameters">4. Parameters</a><a href="#pydantic">5. Pydantic</a><a href="#crud">6. CRUD project</a>
+ <a href="#intermediate">7. Intermediate topics</a><a href="#advanced">8. Advanced topics</a><a href="#roadmap">9. Learning roadmap</a>
+ <a href="#interview">10. Top 20 interview Q&A</a><a href="#practice">11. Practice checklist</a>
+</nav>
+<main>
+<section class="card" id="architecture">
+<h2>1. Understand FastAPI architecture</h2>
+<p>FastAPI is a Python framework for building APIs. It is built on <strong>Starlette</strong> for web functionality and uses <strong>Pydantic</strong> for data validation and serialization. <strong>Uvicorn</strong> is commonly used to run the application as an ASGI server.</p>
+<div class="flow">
+ <div>Client — browser, mobile app, frontend or API client</div><div class="arrow">↓ HTTP request</div>
+ <div>Uvicorn — ASGI server; accepts connections and runs the app</div><div class="arrow">↓ ASGI interface</div>
+ <div>FastAPI application — matches routes and manages dependencies</div><div class="arrow">↓</div>
+ <div>Starlette web layer + Pydantic data validation</div><div class="arrow">↓</div>
+ <div>Your endpoint function — business logic and optional database work</div><div class="arrow">↓ HTTP response</div>
+ <div>Client receives status code, headers and response body</div>
+</div>
+<div class="callout"><strong>Important:</strong> ASGI is an interface specification, not a separate server. Uvicorn is the server; FastAPI is the ASGI application. Starlette and Pydantic are underlying building blocks with different responsibilities.</div>
+<h3>Example request flow</h3>
+<p>For <code>GET /students/101</code>:</p>
+<ol><li>The client sends an HTTP request.</li><li>Uvicorn receives it and calls the FastAPI ASGI application.</li><li>FastAPI matches the route and extracts <code>student_id=101</code>.</li><li>FastAPI validates/converts the value according to its type annotation.</li><li>Your endpoint function runs and obtains the student data.</li><li>FastAPI serializes the result; Uvicorn sends the HTTP response.</li></ol>
+</section>
+
+<section class="card" id="setup">
+<h2>2. Setup your development environment</h2>
+<p>These commands work in a Windows terminal. On macOS/Linux, use <code>source .venv/bin/activate</code> to activate the virtual environment.</p>
+<pre><code>mkdir fastapi_learning
+cd fastapi_learning
+
+python -m venv .venv
+.venv\Scripts\activate
+
+pip install "fastapi[standard]"</code></pre>
+<p>Create <code>main.py</code> in this folder. A virtual environment keeps this project's Python packages separate from other projects.</p>
+<h3>Run the development server</h3>
+<pre><code>uvicorn main:app --reload</code></pre>
+<table><tr><th>Command part</th><th>Meaning</th></tr><tr><td><code>uvicorn</code></td><td>Starts the ASGI server.</td></tr><tr><td><code>main</code></td><td>Python module / file name <code>main.py</code>.</td></tr><tr><td><code>app</code></td><td>FastAPI object inside that module.</td></tr><tr><td><code>--reload</code></td><td>Restarts the development server when code changes. Do not use as a production setting.</td></tr></table>
+<p>Open <code>http://127.0.0.1:8000/docs</code> for interactive Swagger documentation, or <code>http://127.0.0.1:8000/redoc</code> for ReDoc. These local URLs work while the server is running on your computer.</p>
+</section>
+
+<section class="card" id="first-api">
+<h2>3. Build your first API</h2>
+<pre><code>from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def home():
+    return {"message": "Welcome to FastAPI"}</code></pre>
+<ul><li><code>FastAPI</code> is imported from the package.</li><li><code>app = FastAPI()</code> creates the application instance.</li><li><code>@app.get("/")</code> registers a handler for GET requests at the root URL.</li><li><code>home()</code> is called when that route matches.</li><li>The returned Python dictionary is serialized into JSON.</li></ul>
+<div class="callout success"><strong>Try it:</strong> Run Uvicorn, then visit <code>http://127.0.0.1:8000/</code>. Expected response: <code>{"message":"Welcome to FastAPI"}</code>.</div>
+</section>
+
+<section class="card" id="parameters">
+<h2>4. Path parameters and query parameters</h2>
+<h3>Path parameter</h3>
+<p>Use a path parameter when a value identifies a resource, such as a student ID.</p>
+<pre><code>from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/students/{student_id}")
+def get_student(student_id: int):
+    return {"student_id": student_id}</code></pre>
+<p>Request: <code>GET /students/101</code>. FastAPI parses the path value and validates it as an integer. A value such as <code>/students/abc</code> fails validation.</p>
+<h3>Query parameter</h3>
+<p>Use query parameters for filtering, searching, pagination or optional settings.</p>
+<pre><code>@app.get("/students")
+def list_students(class_no: int, city: str = "Pune"):
+    return {"class": class_no, "city": city}</code></pre>
+<p><code>/students?class_no=10</code> uses the default city. <code>/students?class_no=10&amp;city=Mumbai</code> overrides it. Here <code>class_no</code> is required and <code>city</code> is optional.</p>
+<table><tr><th>Path</th><th>Query</th></tr><tr><td><code>/students/101</code></td><td><code>/students?class_no=10</code></td></tr><tr><td>Identifies a particular resource</td><td>Often filters or configures a result</td></tr></table>
+</section>
+
+<section class="card" id="pydantic">
+<h2>5. Request bodies and Pydantic models</h2>
+<p>For a POST request, the client commonly sends JSON in the request body. A Pydantic model describes the expected fields and types.</p>
+<pre><code>from fastapi import FastAPI
+from pydantic import BaseModel, Field
+
+app = FastAPI()
+
+class StudentCreate(BaseModel):
+    name: str = Field(min_length=3, max_length=50)
+    age: int = Field(ge=3, le=25)
+    standard: int = Field(ge=1, le=12)
+
+@app.post("/students")
+def create_student(student: StudentCreate):
+    return {
+        "message": "Student received",
+        "student": student
+    }</code></pre>
+<p>Example JSON body:</p>
+<pre><code>{
+  "name": "Rahul",
+  "age": 15,
+  "standard": 10
+}</code></pre>
+<p>Pydantic validates the incoming data. Invalid or missing required fields normally result in a <code>422</code> validation response from FastAPI. <code>Field</code> adds constraints such as minimum length and numeric bounds.</p>
+<div class="callout"><strong>Remember:</strong> A request model describes input. A response model can separately describe the data your API is allowed to return. Avoid exposing private fields such as password hashes in responses.</div>
+</section>
+
+<section class="card" id="crud">
+<h2>6. Practical project: Student CRUD API</h2>
+<p>CRUD means Create, Read, Update and Delete. This small example uses an in-memory list so you can focus on HTTP methods and route logic. Data is lost when the application restarts; use a database for persistent storage.</p>
+<pre><code>from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
+
+app = FastAPI()
+
+class Student(BaseModel):
+    id: int
+    name: str = Field(min_length=3)
+    age: int = Field(ge=3, le=25)
+    standard: int = Field(ge=1, le=12)
+
+students: dict[int, Student] = {}
+
+@app.post("/students", status_code=201)
+def create_student(student: Student):
+    if student.id in students:
+        raise HTTPException(status_code=409,
+                            detail="Student already exists")
+    students[student.id] = student
+    return student
+
+@app.get("/students")
+def get_students():
+    return list(students.values())
+
+@app.get("/students/{student_id}")
+def get_student(student_id: int):
+    student = students.get(student_id)
+    if student is None:
+        raise HTTPException(status_code=404,
+                            detail="Student not found")
+    return student
+
+@app.put("/students/{student_id}")
+def replace_student(student_id: int, student: Student):
+    if student_id not in students:
+        raise HTTPException(status_code=404,
+                            detail="Student not found")
+    if student.id != student_id:
+        raise HTTPException(status_code=400,
+                            detail="ID in body must match URL")
+    students[student_id] = student
+    return student
+
+@app.delete("/students/{student_id}",
+            status_code=204)
+def delete_student(student_id: int):
+    if student_id not in students:
+        raise HTTPException(status_code=404,
+                            detail="Student not found")
+    del students[student_id]
+    return None</code></pre>
+<h3>Test in Swagger</h3>
+<ol><li>Run <code>uvicorn main:app --reload</code>.</li><li>Open <code>/docs</code>.</li><li>Use POST <code>/students</code> with <code>{"id":101,"name":"Rahul","age":15,"standard":10}</code>.</li><li>Use GET <code>/students</code> and GET <code>/students/101</code>.</li><li>Use PUT <code>/students/101</code> with a complete replacement body.</li><li>Use DELETE <code>/students/101</code>, then GET it again to see the 404 response.</li></ol>
+<p><strong>Why use a dictionary here?</strong> It makes lookup by ID straightforward. It is still temporary memory storage, not a substitute for a database.</p>
+</section>
+
+<section class="card" id="intermediate">
+<h2>7. Intermediate FastAPI topics</h2>
+<div class="grid">
+ <div class="mini"><span class="tag">Routing</span><h3>APIRouter</h3><p>Split endpoints into modules such as students, teachers and attendance. Include routers in the main application.</p></div>
+ <div class="mini"><span class="tag">Validation</span><h3>Response models</h3><p>Use <code>response_model</code> to document, validate and filter the response structure.</p></div>
+ <div class="mini"><span class="tag">Errors</span><h3>HTTPException</h3><p>Return meaningful HTTP errors, for example 404 when a record is missing or 409 for a conflict.</p></div>
+ <div class="mini"><span class="tag">Reuse</span><h3>Dependency injection</h3><p>Use <code>Depends()</code> to share logic such as authentication checks or database session creation.</p></div>
+ <div class="mini"><span class="tag">Web layer</span><h3>Middleware</h3><p>Run logic around requests and responses, for example request timing or request ID handling.</p></div>
+ <div class="mini"><span class="tag">Browser</span><h3>CORS</h3><p>Configure allowed frontend origins, methods and headers when browsers call your API from another origin.</p></div>
+</div>
+<h3>Dependency injection example</h3>
+<pre><code>from fastapi import FastAPI, Depends
+
+app = FastAPI()
+
+def common_info():
+    return {"application": "School API"}
+
+@app.get("/about")
+def about(info: dict = Depends(common_info)):
+    return info</code></pre>
+<p>FastAPI calls the dependency and provides its result to the endpoint. Dependencies can themselves have dependencies.</p>
+</section>
+
+<section class="card" id="advanced">
+<h2>8. Advanced topics to master</h2>
+<table><tr><th>Topic</th><th>What to learn</th></tr>
+<tr><td>Async / await</td><td>Event loop, concurrency, async database and HTTP clients; understand which operations are blocking.</td></tr>
+<tr><td>SQL databases</td><td>SQL fundamentals, PostgreSQL, SQLite, indexes, constraints and transactions.</td></tr>
+<tr><td>ORM</td><td>SQLAlchemy or SQLModel, models, sessions, relationships and migrations.</td></tr>
+<tr><td>Authentication</td><td>Password hashing, OAuth2 concepts, access tokens, JWT validation and authorization.</td></tr>
+<tr><td>File handling</td><td>UploadFile, file validation, storage and download responses.</td></tr>
+<tr><td>Background tasks</td><td>Tasks that can run after a response; use a task queue for substantial or durable workloads.</td></tr>
+<tr><td>WebSockets</td><td>Two-way, real-time communication such as live notifications.</td></tr>
+<tr><td>Testing</td><td>pytest, FastAPI TestClient, dependency overrides and test databases.</td></tr>
+<tr><td>Production</td><td>Environment configuration, secrets, logging, monitoring, Docker, HTTPS, deployment and scaling.</td></tr></table>
+<div class="callout"><strong>Security note:</strong> Never store plaintext passwords, hardcode secrets in source code, or assume that hiding a frontend button protects an API. Enforce authorization on the backend.</div>
+</section>
+
+<section class="card" id="roadmap">
+<h2>9. Suggested learning roadmap</h2>
+<table><tr><th>Stage</th><th>Topics</th><th>Milestone</th></tr>
+<tr><td>1. Foundation</td><td>Python functions, types, JSON, HTTP, REST</td><td>Explain a request and response</td></tr>
+<tr><td>2. Beginner</td><td>Install, routes, methods, path/query parameters</td><td>Build a small API</td></tr>
+<tr><td>3. Core</td><td>Pydantic, request bodies, response models, errors</td><td>Build validated CRUD endpoints</td></tr>
+<tr><td>4. Intermediate</td><td>Routers, dependencies, middleware, CORS</td><td>Organize a multi-file app</td></tr>
+<tr><td>5. Database</td><td>SQL, SQLAlchemy, PostgreSQL, migrations</td><td>Persist student records</td></tr>
+<tr><td>6. Security</td><td>Hashing, tokens, authentication, roles</td><td>Protect admin endpoints</td></tr>
+<tr><td>7. Advanced</td><td>Async, files, WebSockets, background work, tests</td><td>Build and test a complete backend</td></tr>
+<tr><td>8. Deployment</td><td>Docker, environment variables, logging, hosting</td><td>Deploy a production-ready service</td></tr></table>
+<h3>Suggested portfolio projects</h3>
+<ul><li><strong>Beginner:</strong> Student directory API with in-memory CRUD.</li><li><strong>Intermediate:</strong> Attendance API with PostgreSQL and filtering.</li><li><strong>Advanced:</strong> School ERP backend with users, roles, attendance, fees, exams, tests and deployment.</li></ul>
+</section>
+
+<section class="card" id="interview">
+<h2>10. Top 20 FastAPI interview questions and answers</h2>
+<p class="muted">Open each question to reveal a concise answer. Practice explaining the answer in your own words and giving a small code example where appropriate.</p>
+<details><summary><span class="question">01.</span> What is FastAPI?</summary><p>FastAPI is a modern Python web framework for building APIs. It uses Python type hints, supports asynchronous endpoints, validates data through Pydantic, and generates OpenAPI documentation automatically.</p></details>
+<details><summary><span class="question">02.</span> What are the main advantages of FastAPI?</summary><p>Automatic request validation, automatic interactive API documentation, type-hint-based development, dependency injection, async support and strong performance. Actual performance depends on the application and its dependencies.</p></details>
+<details><summary><span class="question">03.</span> What is Uvicorn?</summary><p>Uvicorn is an ASGI server. It runs an ASGI application such as FastAPI and handles incoming network connections and HTTP protocol communication.</p></details>
+<details><summary><span class="question">04.</span> What is ASGI, and how is it different from WSGI?</summary><p>ASGI is the Asynchronous Server Gateway Interface, an interface between an application server and a Python web application. WSGI is the older synchronous-oriented interface. ASGI supports asynchronous applications and protocols such as WebSockets.</p></details>
+<details><summary><span class="question">05.</span> What is Starlette's role in FastAPI?</summary><p>Starlette provides core web capabilities used by FastAPI, including routing, request and response handling, middleware and WebSocket support.</p></details>
+<details><summary><span class="question">06.</span> What is Pydantic?</summary><p>Pydantic is a Python data validation and serialization library. FastAPI uses Pydantic models to describe and validate structured request data and to help serialize data.</p></details>
+<details><summary><span class="question">07.</span> What is the difference between path and query parameters?</summary><p>Path parameters are part of the URL path and commonly identify a resource, such as <code>/students/101</code>. Query parameters follow <code>?</code> and commonly filter or configure a request, such as <code>/students?class_no=10</code>.</p></details>
+<details><summary><span class="question">08.</span> How do you receive a JSON request body?</summary><p>Define a Pydantic model and declare it as a parameter in an endpoint function. FastAPI reads the request body, validates it and supplies the model instance to the function.</p></details>
+<details><summary><span class="question">09.</span> What is dependency injection in FastAPI?</summary><p>Dependency injection lets an endpoint declare what it needs using <code>Depends()</code>. FastAPI resolves the dependency and supplies its result. It is useful for shared logic, authentication and database sessions.</p></details>
+<details><summary><span class="question">10.</span> What is the difference between async def and def endpoints?</summary><p><code>async def</code> defines a coroutine and can use <code>await</code> for awaitable operations. A normal <code>def</code> is synchronous; FastAPI runs ordinary synchronous path operations in a thread pool. Choose based on the libraries and operations being used.</p></details>
+<details><summary><span class="question">11.</span> What is the difference between PUT and PATCH?</summary><p>PUT conventionally replaces a resource representation. PATCH applies a partial modification. The exact behavior should be defined and documented by the API.</p></details>
+<details><summary><span class="question">12.</span> What is HTTPException?</summary><p><code>HTTPException</code> is used to stop request processing and return an HTTP error response with a status code and detail message, for example a 404 when a student does not exist.</p></details>
+<details><summary><span class="question">13.</span> What is a response_model?</summary><p><code>response_model</code> declares the expected response schema. FastAPI uses it for response validation, serialization and documentation, and it can filter fields that should not be returned.</p></details>
+<details><summary><span class="question">14.</span> What is APIRouter?</summary><p><code>APIRouter</code> groups related endpoints so an application can be split into modules. For example, student routes and teacher routes can live in separate files and be included in the main app.</p></details>
+<details><summary><span class="question">15.</span> What is middleware?</summary><p>Middleware is code that runs around request handling. It can inspect or modify requests and responses, measure execution time, add headers or implement cross-cutting behavior.</p></details>
+<details><summary><span class="question">16.</span> What is CORS?</summary><p>Cross-Origin Resource Sharing is a browser security mechanism. A FastAPI application can configure which origins, methods and headers are allowed to access it from browser-based frontends.</p></details>
+<details><summary><span class="question">17.</span> How does FastAPI generate Swagger documentation?</summary><p>FastAPI generates an OpenAPI schema from route declarations, type annotations and models. Swagger UI is commonly available at <code>/docs</code>, and ReDoc at <code>/redoc</code>.</p></details>
+<details><summary><span class="question">18.</span> How do you handle authentication in FastAPI?</summary><p>Use a secure authentication design with password hashing, token or session verification, and backend authorization checks. FastAPI provides security utilities and dependency patterns; the application must implement and configure the actual security policy correctly.</p></details>
+<details><summary><span class="question">19.</span> How do you test FastAPI endpoints?</summary><p>Use pytest with FastAPI's <code>TestClient</code> to send requests to the application and assert status codes and response data. Override dependencies to isolate databases or external services during tests.</p></details>
+<details><summary><span class="question">20.</span> How do you prepare a FastAPI application for production?</summary><p>Use production server configuration, environment-based settings, secure secret management, HTTPS, database migrations, logging, monitoring, tests, appropriate worker/process management and a deployment strategy. Disable development reload mode.</p></details>
+</section>
+
+<section class="card" id="practice">
+<h2>11. Your practical checklist</h2>
+<p>Tick each item as you complete it. Your progress is kept in this page while it remains open; it is not saved to a server.</p>
+<div class="checklist" id="tasks">
+<label><input type="checkbox"> Install Python and create a virtual environment</label>
+<label><input type="checkbox"> Install FastAPI and run Uvicorn</label>
+<label><input type="checkbox"> Build GET and POST endpoints</label>
+<label><input type="checkbox"> Practise path and query parameters</label>
+<label><input type="checkbox"> Create Pydantic request models</label>
+<label><input type="checkbox"> Build all five CRUD operations</label>
+<label><input type="checkbox"> Add response models and error handling</label>
+<label><input type="checkbox"> Split endpoints using APIRouter</label>
+<label><input type="checkbox"> Use Depends for a shared dependency</label>
+<label><input type="checkbox"> Connect a SQL database</label>
+<label><input type="checkbox"> Add authentication and authorization</label>
+<label><input type="checkbox"> Write endpoint tests with pytest</label>
+<label><input type="checkbox"> Configure and deploy the application</label>
+</div>
+<div class="callout success"><strong>Best learning method:</strong> Read a concept, type the code yourself, run it, test it in <code>/docs</code>, change one thing, observe the result, and explain the request flow aloud.</div>
+</section>
+</main>
+</div>
+<footer>FastAPI Learning Guide · Beginner to Advanced · Use the official FastAPI and Pydantic documentation for version-specific details.</footer>
+</body>
+</html>
